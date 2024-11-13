@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Website</title>
     <style>
+      * {
+        margin: 0px;
+      }
+
       .top-bar {
         padding: 1rem;
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
         align-items: center;
-        border-radius: 10px;
-        border-bottom: black;
+        border-bottom: 2px solid #ddd;
       }
 
       /* Hide default arrows in Chrome, Safari, Edge, and Opera */
@@ -61,12 +64,72 @@
         width: 30px;
       }
 
+      /* Used to set the arrow button icons */
       .arrow-up::after {
         content: '▲';
       }
-
       .arrow-down::after {
         content: '▼';
+      }
+
+      .search-bar {
+        display: flex;
+        width: 500px;
+        height: 30px;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .search-bar input {
+        width: 90%;
+      }
+
+      .hamburger-menu {
+        background: none;
+        border: 1px solid black;
+        border-radius: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 7px 5px;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+      }
+
+      .hamburger-menu-bar {
+        width: 100%;
+        height: 2px;
+        background-color: #333; /* Color of the lines */
+        border-radius: 2px;
+      }
+
+      .profile-button {
+        background: none;
+        border: 1px solid black;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      .scroll-list {
+        display: flex;
+        overflow-x: auto;
+        padding: 20px;
+        gap: 1rem;
+        scroll-behavior: smooth;
+      }
+
+      .item {
+        width: 300px;
+        height: 300px;
+        background-color: #4CAF50;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5rem;
+        border-radius: 8px;
+        flex-shrink: 0;
       }
     </style>
   </head>
@@ -79,28 +142,59 @@
           <button class="arrow-down" onclick="decrementCalorieInput()"></button>
         </div>
         <div class="number-input-column">
-          <p>Calories</p>
+          <p>CALORIES</p>
           <input type="number" id="calorieInput" value="500" step="10">
         </div>
       </div>
-      <div class="search-bar"></div>
-      <div class="profile-button"></div>
+      <div class="search-bar">
+        <input type="text" id="searchBar" placeholder="Search">
+        <button class="hamburger-menu" aria-label="Open menu" onclick="openPreferences()">
+          <span class="hamburger-menu-bar"></span>
+          <span class="hamburger-menu-bar"></span>
+          <span class="hamburger-menu-bar"></span>
+      </button>
+      </div>
+      <div>
+        <button class="profile-button" onclick="openProfile()">Profile</button>
+      </div>
     </div>
+
     <h1>Welcome to My HCI 1 M3 Website</h1>
 
+    <section class="scroll-list">
+      <div class="item">Item 1</div>
+      <div class="item">Item 2</div>
+      <div class="item">Item 3</div>
+      <div class="item">Item 4</div>
+      <div class="item">Item 5</div>
+      <div class="item">Item 6</div>
+      <div class="item">Item 7</div>
+      <div class="item">Item 8</div>
+      <div class="item">Item 9</div>
+    </section>
+
     <script>
+      // --- Top Bar ---
       const calorieInput = document.getElementById("calorieInput");
       const step = parseInt(calorieInput.step);
 
       function incrementCalorieInput() {
-        console.log("hello");
         calorieInput.value = parseInt(calorieInput.value) + step;
-        console.log("hi");
       }
 
       function decrementCalorieInput() {
         calorieInput.value = parseInt(calorieInput.value) - step;
       }
+
+      function openPreferences() {
+        console.log("open preferences");
+      }
+
+      function openProfile() {
+        console.log("open profile");
+      }
+
+      // --- Cuisines ---
     </script>
   </body>
 </html>
