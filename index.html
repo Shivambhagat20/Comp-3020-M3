@@ -3,15 +3,104 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>My Website</title>
-    <link rel="stylesheet" href="./style.css">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <style>
+      .top-bar {
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 10px;
+        border-bottom: black;
+      }
+
+      /* Hide default arrows in Chrome, Safari, Edge, and Opera */
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+      }
+
+      /* Hide default arrows in Firefox */
+      input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+      }
+
+      .number-input {
+        display: flex;
+        align-items: center;
+        width: 120px;
+      }
+
+      .number-input-column {
+        display: flex;
+        flex-direction: column;
+        height: 60px;
+      }
+
+      .number-input input {
+        width: 80px;
+        text-align: center;
+        font-size: 1.2rem;
+        padding: 0.2rem;
+      }
+
+      .number-input p {
+        height: 14px;
+        text-align: center;
+        font-size: 12px;
+        margin: 3px;
+      }
+
+      .number-input button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        padding: 0.2rem;
+        width: 30px;
+      }
+
+      .arrow-up::after {
+        content: '▲';
+      }
+
+      .arrow-down::after {
+        content: '▼';
+      }
+    </style>
   </head>
   <body>
-    <main>
-        <h1>Welcome to My HCI 1 M3 Website</h1>  
-    </main>
-    <script src="index.js"></script>
+      
+    <div class="top-bar">
+      <div class="number-input">
+        <div class="number-input-column">
+          <button class="arrow-up" onclick="incrementCalorieInput()"></button>
+          <button class="arrow-down" onclick="decrementCalorieInput()"></button>
+        </div>
+        <div class="number-input-column">
+          <p>Calories</p>
+          <input type="number" id="calorieInput" value="500" step="10">
+        </div>
+      </div>
+      <div class="search-bar"></div>
+      <div class="profile-button"></div>
+    </div>
+    <h1>Welcome to My HCI 1 M3 Website</h1>
+
+    <script>
+      const calorieInput = document.getElementById("calorieInput");
+      const step = parseInt(calorieInput.step);
+
+      function incrementCalorieInput() {
+        console.log("hello");
+        calorieInput.value = parseInt(calorieInput.value) + step;
+        console.log("hi");
+      }
+
+      function decrementCalorieInput() {
+        calorieInput.value = parseInt(calorieInput.value) - step;
+      }
+    </script>
   </body>
 </html>
