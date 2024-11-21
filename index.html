@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Website</title>
+    <title>Calorie Shopper</title>
     <style>
       * {
         margin: 0px;
@@ -109,14 +109,6 @@
         border: 1px solid black;
         cursor: pointer;
         border-radius: 5px;
-      }
-
-      .page {
-        display: none;
-      }
-
-      .active {
-        display: block;
       }
 
       .page-home {
@@ -245,7 +237,14 @@
       </div>
     </div>
 
-    <div id="popup-overlay" class="popup-overlay" onclick="closePreferences()"></div>
+    <!-- Popups -->
+
+    <div id="popup-overlay" class="popup-overlay"></div>
+
+    <section id="popup-daily-pick" class="popup">
+      <h1>PICK OF THE DAY</h1>
+      <div id="close-daily-pick" class="close-button" onclick="closeDailyPick()">×</div>
+    </section>
 
     <section id="popup-preferences" class="popup">
       <h1>PREFERENCES</h1>
@@ -284,10 +283,9 @@
 
 
     <script>
-      // --- Page Management ---
-      
-      const pages = document.querySelectorAll("[id*='page']");
+      // ===== Data =====
 
+      // Define the merchant data
       const merchantData = [{
         id: "subway",
         displayName: "SUBWAY",
@@ -362,62 +360,6 @@
         }]
       }];
 
-      function getMerchant(merchantId) {
-        let merchantObject = {displayName: "Test"};
-
-        merchantData.forEach((merchant) => {
-          console.log(merchant);
-          if (merchant.id === merchantId) {
-            merchantObject = merchant;
-          }
-        });
-
-        return merchantObject;
-      }
-
-      function openMerchantPage(merchantId) {
-        pages.forEach((page) => {
-          page.style.display =  "none";
-        });
-
-        const merchantPage = document.getElementById("page-merchant");
-        merchantPage.style.display = "block";
-
-        const merchantHeader = document.getElementById("header-merchant");
-        merchantHeader.textContent = getMerchant(merchantId).displayName;
-      }
-
-      // --- Top Bar ---
-      const calorieInput = document.getElementById("calorieInput");
-      const step = parseInt(calorieInput.step);
-
-      function incrementCalorieInput() {
-        calorieInput.value = parseInt(calorieInput.value) + step;
-      }
-
-      function decrementCalorieInput() {
-        calorieInput.value = parseInt(calorieInput.value) - step;
-      }
-
-      const overlay = document.getElementById("popup-overlay");
-      const popupPreferences = document.getElementById("popup-preferences");
-
-      function openPreferences() {
-        overlay.style.display = "block";
-        popupPreferences.style.display = "flex";
-      }
-
-      function closePreferences() {
-        overlay.style.display = "none";
-        popupPreferences.style.display = "none";
-      }
-
-      function openProfile() {
-        console.log("open profile");
-      }
-
-      // --- Cuisines ---
-
       // Define the cuisine data
       const cuisineData = [{
         name: "Pizza",
@@ -434,6 +376,102 @@
       }, {
         name: "Cuisine Z"
       }];
+
+      // Given a merchant id, return the merchant data object
+      function getMerchant(merchantId) {
+        let merchantObject = {displayName: "Test"};
+
+        merchantData.forEach((merchant) => {
+          console.log(merchant);
+          if (merchant.id === merchantId) {
+            merchantObject = merchant;
+          }
+        });
+
+        return merchantObject;
+      }
+
+      // ===== Popups =====
+
+      const overlay = document.getElementById("popup-overlay");
+      const popupDailyPick = document.getElementById("popup-daily-pick");
+      const popupPreferences = document.getElementById("popup-preferences");
+
+      // Open the pick of the day popup and make the overlay close the popup when clicked
+      function openDailyPick() {
+        overlay.style.display = "block";
+        popupDailyPick.style.display = "flex";
+
+        overlay.onclick = closeDailyPick;
+      }
+
+      function closeDailyPick() {
+        overlay.style.display = "none";
+        popupDailyPick.style.display = "none";
+      }
+
+      // Open the preferences popup and make the overlay close the popup when clicked
+      function openPreferences() {
+        overlay.style.display = "block";
+        popupPreferences.style.display = "flex";
+
+        overlay.onclick = closePreferences;
+      }
+
+      function closePreferences() {
+        overlay.style.display = "none";
+        popupPreferences.style.display = "none";
+      }
+
+      // ===== Page Management =====
+
+      // Get all the pages and start the site on the home page
+      const pages = document.querySelectorAll("[id*='page']");
+      openHomePage();
+
+      // Open the home page
+      function openHomePage() {
+        pages.forEach((page) => {
+          page.style.display =  "none";
+        });
+
+        const homePage = document.getElementById("page-home");
+        homePage.style.display = "block";
+
+        openDailyPick();
+      }
+
+      // Open the merchant page and set it up for the passed merchant id
+      function openMerchantPage(merchantId) {
+        pages.forEach((page) => {
+          page.style.display =  "none";
+        });
+
+        const merchantPage = document.getElementById("page-merchant");
+        merchantPage.style.display = "block";
+
+        const merchantHeader = document.getElementById("header-merchant");
+        merchantHeader.textContent = getMerchant(merchantId).displayName;
+      }
+
+      // ===== Top Bar =====
+
+      const calorieInput = document.getElementById("calorieInput");
+      const step = parseInt(calorieInput.step);
+
+      function incrementCalorieInput() {
+        calorieInput.value = parseInt(calorieInput.value) + step;
+      }
+
+      function decrementCalorieInput() {
+        calorieInput.value = parseInt(calorieInput.value) - step;
+      }
+
+      function openProfile() {
+        console.log("open profile");
+      }
+
+      // ===== Cuisines =====
 
       // Get the parent element for the list, create a div for each cuisine, and add the divs as children of the parent
       const cuisineList = document.getElementById("list-cuisine");
