@@ -111,24 +111,56 @@
         border-radius: 5px;
       }
 
-      .scroll-list {
-        display: flex;
-        overflow-x: auto;
-        padding: 20px;
-        gap: 1rem;
-        scroll-behavior: smooth;
+      .page {
+        display: none;
       }
 
-      .cuisine {
-        width: 300px;
+      .active {
+        display: block;
+      }
+
+      .page-home {
+        padding: 20px;
+      }
+
+      .list-recommended {
+        display: flex;
+        flex-direction: row;
+        border: 1px solid black;
+        margin-bottom: 20px;
+      }
+
+      .item-recommended {
+        width: 25%;
         height: 300px;
         background-color: #4CAF50;
         color: white;
+        border: 1px solid black;
         display: flex;
         justify-content: center;
         align-items: center;
         font-size: 1.5rem;
-        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .list-scroll {
+        display: flex;
+        overflow-x: auto;
+        /* padding: 20px; */
+        /* gap: 1rem; */
+        scroll-behavior: smooth;
+      }
+
+      .item-cuisine {
+        width: 300px;
+        height: 300px;
+        background-color: #4CAF50;
+        color: white;
+        border: 1px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5rem;
         flex-shrink: 0;
       }
 
@@ -213,22 +245,148 @@
       </div>
     </div>
 
-    <h1>Welcome to My HCI 1 M3 Website</h1>
-
-    <!-- Cuisines -->
-
-    <section id="list-cuisine" class="scroll-list"></section>
-
     <div id="popup-overlay" class="popup-overlay" onclick="closePreferences()"></div>
 
     <section id="popup-preferences" class="popup">
-      <h1>Preferences</h1>
-      <div id="close-preferences" class="close-button">×</div>
-    </section> 
+      <h1>PREFERENCES</h1>
+      <div id="close-preferences" class="close-button" onclick="closePreferences()">×</div>
+    </section>
 
+    <!-- Home page -->
+    <section id="page-home" class="page active page-home">
+      <!-- Recommended -->
+      <h1>Recommended</h1>
+      <section class="list-recommended">
+        <div class="item-recommended" onclick="openMerchantPage('subway')">SUBWAY</div>
+        <div class="item-recommended" onclick="openMerchantPage('nuburger')">NUBURGER</div>
+        <div class="item-recommended" onclick="openMerchantPage('booster-juice')">BOOSTER JUICE</div>
+        <div class="item-recommended" onclick="openMerchantPage('freshii')">FRESHII</div>
+      </section>
+
+      <!-- Cuisines -->
+      <h1>Cuisines</h1>
+      <section id="list-cuisine" class="list-scroll"></section>
+    </section>
+
+    <!-- Merchant Page -->
+     <section id="page-merchant" class="page">
+      <h1 id="header-merchant">SUBWAY</h1>
+      <section id="list-items" class="list-scroll">
+        <div>Pizza Sub Melt</div>
+        <div>BLT</div>
+        <div>Tuna</div>
+        <div>Pepsi</div>
+        <div>Cookies</div>
+        <div>Item X</div>
+        <div>Item Y</div>
+      </section>
+     </section>
 
 
     <script>
+      // --- Page Management ---
+      
+      const pages = document.querySelectorAll("[id*='page']");
+
+      const merchantData = [{
+        id: "subway",
+        displayName: "SUBWAY",
+        items: [{
+          name: "Pizza Sub Melt",
+        }, {
+          name: "BLT",
+        }, {
+          name: "Tuna",
+        }, {
+          name: "Pepsi",
+        }, {
+          name: "Cookies",
+        }, {
+          name: "Item X",
+        }, {
+          name: "Item Y",
+        }]
+      }, {
+        id: "nuburger",
+        displayName: "NUBURGER",
+        items: [{
+          name: "Item A",
+        }, {
+          name: "Item B",
+        }, {
+          name: "Item C",
+        }, {
+          name: "Item D",
+        }, {
+          name: "Item E",
+        }, {
+          name: "Item F",
+        }, {
+          name: "Item G",
+        }]
+      }, {
+        id: "booster-juice",
+        displayName: "BOOSTER JUICE",
+        items: [{
+          name: "Item A",
+        }, {
+          name: "Item B",
+        }, {
+          name: "Item C",
+        }, {
+          name: "Item D",
+        }, {
+          name: "Item E",
+        }, {
+          name: "Item F",
+        }, {
+          name: "Item G",
+        }]
+      }, {
+        id: "freshii",
+        displayName: "FRESHII",
+        items: [{
+          name: "Item A",
+        }, {
+          name: "Item B",
+        }, {
+          name: "Item C",
+        }, {
+          name: "Item D",
+        }, {
+          name: "Item E",
+        }, {
+          name: "Item F",
+        }, {
+          name: "Item G",
+        }]
+      }];
+
+      function getMerchant(merchantId) {
+        let merchantObject = {displayName: "Test"};
+
+        merchantData.forEach((merchant) => {
+          console.log(merchant);
+          if (merchant.id === merchantId) {
+            merchantObject = merchant;
+          }
+        });
+
+        return merchantObject;
+      }
+
+      function openMerchantPage(merchantId) {
+        pages.forEach((page) => {
+          page.style.display =  "none";
+        });
+
+        const merchantPage = document.getElementById("page-merchant");
+        merchantPage.style.display = "block";
+
+        const merchantHeader = document.getElementById("header-merchant");
+        merchantHeader.textContent = getMerchant(merchantId).displayName;
+      }
+
       // --- Top Bar ---
       const calorieInput = document.getElementById("calorieInput");
       const step = parseInt(calorieInput.step);
@@ -245,8 +403,6 @@
       const popupPreferences = document.getElementById("popup-preferences");
 
       function openPreferences() {
-        console.log("open preferences");
-
         overlay.style.display = "block";
         popupPreferences.style.display = "flex";
       }
@@ -284,7 +440,7 @@
       cuisineData.forEach((cuisine) => {
         const cuisineDiv = document.createElement("div");
         cuisineDiv.textContent = cuisine.name;
-        cuisineDiv.className = "cuisine";
+        cuisineDiv.className = "item-cuisine";
         cuisineList.appendChild(cuisineDiv);
       });
     </script>
