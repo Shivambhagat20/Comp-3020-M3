@@ -119,7 +119,7 @@
         scroll-behavior: smooth;
       }
 
-      .item {
+      .cuisine {
         width: 300px;
         height: 300px;
         background-color: #4CAF50;
@@ -131,10 +131,64 @@
         border-radius: 8px;
         flex-shrink: 0;
       }
+
+      .popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 500;
+      }
+
+      .popup {
+        width: 500px;
+        height: 400px;
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 501;
+        justify-content: center;
+      }
+
+      .close-button {
+        width: 25px;
+        height: 25px;
+        border: 1px solid black;
+        border-radius: 50%;
+        background-color: white;
+        color: black;
+        font-size: 30px;
+        text-align: center;
+        line-height: 40px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: fixed;
+        top: 20px;
+        right: 20px;
+      }
+      .close-button:hover {
+        background-color: #e6e6e6;
+      }
+      .close-button:active {
+        background-color: #bebebe;
+        box-shadow: none;
+      }
     </style>
   </head>
   <body>
-      
+     <!-- Top Bar -->
+
     <div class="top-bar">
       <div class="number-input">
         <div class="number-input-column">
@@ -161,17 +215,18 @@
 
     <h1>Welcome to My HCI 1 M3 Website</h1>
 
-    <section class="scroll-list">
-      <div class="item">Item 1</div>
-      <div class="item">Item 2</div>
-      <div class="item">Item 3</div>
-      <div class="item">Item 4</div>
-      <div class="item">Item 5</div>
-      <div class="item">Item 6</div>
-      <div class="item">Item 7</div>
-      <div class="item">Item 8</div>
-      <div class="item">Item 9</div>
-    </section>
+    <!-- Cuisines -->
+
+    <section id="list-cuisine" class="scroll-list"></section>
+
+    <div id="popup-overlay" class="popup-overlay" onclick="closePreferences()"></div>
+
+    <section id="popup-preferences" class="popup">
+      <h1>Preferences</h1>
+      <div id="close-preferences" class="close-button">×</div>
+    </section> 
+
+
 
     <script>
       // --- Top Bar ---
@@ -186,8 +241,19 @@
         calorieInput.value = parseInt(calorieInput.value) - step;
       }
 
+      const overlay = document.getElementById("popup-overlay");
+      const popupPreferences = document.getElementById("popup-preferences");
+
       function openPreferences() {
         console.log("open preferences");
+
+        overlay.style.display = "block";
+        popupPreferences.style.display = "flex";
+      }
+
+      function closePreferences() {
+        overlay.style.display = "none";
+        popupPreferences.style.display = "none";
       }
 
       function openProfile() {
@@ -195,6 +261,32 @@
       }
 
       // --- Cuisines ---
+
+      // Define the cuisine data
+      const cuisineData = [{
+        name: "Pizza",
+      }, {
+        name: "Mexican"
+      }, {
+        name: "Chinese",
+      }, {
+        name: "Indian",
+      }, {
+        name: "Cuisine X"
+      }, {
+        name: "Cuisine Y"
+      }, {
+        name: "Cuisine Z"
+      }];
+
+      // Get the parent element for the list, create a div for each cuisine, and add the divs as children of the parent
+      const cuisineList = document.getElementById("list-cuisine");
+      cuisineData.forEach((cuisine) => {
+        const cuisineDiv = document.createElement("div");
+        cuisineDiv.textContent = cuisine.name;
+        cuisineDiv.className = "cuisine";
+        cuisineList.appendChild(cuisineDiv);
+      });
     </script>
   </body>
 </html>
