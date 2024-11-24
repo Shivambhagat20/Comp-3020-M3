@@ -202,7 +202,7 @@
         
       }
 
-      .scroll-list-cart {
+      .scroll-list-merchant-cart {
         display: flex;
         flex-direction: column;
         width: 90%;
@@ -324,6 +324,7 @@
       </div>
       <div>
         <button class="profile-button" onclick="openProfile()">Profile</button>
+        <button class="profile-button" onclick="openCartPage()">Your Cart</button>
       </div>
     </div>
 
@@ -358,28 +359,28 @@
     </section>
 
     <!-- Merchant Page -->
-     <section id="page-merchant" class="page-merchant">
+    <section id="page-merchant" class="page-merchant">
       <h1 id="header-merchant">TEST</h1>
       <div class="layout-merchant">
         <section id="list-items" class="list-scroll-merchant"></section>
         <section id="cart-merchant" class="cart-merchant">
           <h5>YOUR CART</h5>
-          <div id="scroll-list-cart" class="scroll-list-cart">
-            <!-- <div class="item-cart">BLT</div>
-            <div class="cart-item">Tuna</div>
-            <div class="cart-item">Pepsi</div>
-            <div class="cart-item">Pepsi</div>
-            <div class="cart-item">Pepsi</div>
-            <div class="cart-item">Pepsi</div>
-            <div class="cart-item">Pepsi</div>
-            <div class="cart-item">Pepsi</div>
-            <div class="cart-item">Pepsi</div>
-            <div class="cart-item">Pepsi</div> -->
-          </div>
+          <div id="scroll-list-merchant-cart" class="scroll-list-merchant-cart"></div>
           <p>TOTAL: $19.99</p>
-          <button>CHECKOUT</button>
+          <button onclick="openCartPage()">CHECKOUT</button>
         </section>
       </div>
+    </section>
+
+    <!-- Cart Page -->
+     <section id="page-cart">
+      <section></section>
+      <section>
+        <h1>YOUR CART</h1>
+        <div id="scroll-list-cart"></div>
+        <p>TOTAL: $19.99</p>
+        <button>PAY NOW</button>
+      </section>
      </section>
 
 
@@ -617,7 +618,7 @@
         });
 
         // Get the element that holds the list of items in the user's cart
-        const cartItemList = document.getElementById("scroll-list-cart");
+        const cartItemList = document.getElementById("scroll-list-merchant-cart");
 
         // Remove all children from the cart list element
         while (cartItemList.firstChild) {
@@ -646,6 +647,45 @@
 
         // Refresh the merchant page to update the cart UI
         openMerchantPage(currentMerchantPage);
+      }
+
+      // ===== Cart Page =====
+
+      function openCartPage() {
+        // Turn off all pages
+        pages.forEach((page) => {
+          page.style.display =  "none";
+        });
+
+        // Turn on the cart page
+        const cartPage = document.getElementById("page-cart");
+        cartPage.style.display = "block";
+
+        // Get the element that holds the list of items in the user's cart
+        const cartItemList = document.getElementById("scroll-list-cart");
+
+        // Remove all children from the cart list element
+        while (cartItemList.firstChild) {
+          cartItemList.removeChild(cartItemList.firstChild);
+        }
+
+        // Create new children for the user's cart using their cart data
+        cart.forEach((item) => {
+          const itemDiv = document.createElement("div");
+          itemDiv.textContent = item.name;
+          itemDiv.className = "item-cart";
+          cartItemList.appendChild(itemDiv);
+        });
+
+        // Turn on the back button so users can go back to the home page or to the merchant page they came from
+        backButton.style.display = "block";
+        backButton.onclick = function() {
+          if(currentMerchantPage === "") {
+            openHomePage(false);
+          } else {
+            openMerchantPage(currentMerchantPage);
+          }
+        };
       }
 
       // ===== Top Bar =====
