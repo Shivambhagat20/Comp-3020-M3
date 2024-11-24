@@ -192,9 +192,9 @@
         background-color: white;
         color: black;
         border: 1px solid black;
-        margin-right: 20px;
-        border-top-right-radius: 8px;
-        border-bottom-right-radius: 8px;
+        margin-left: 20px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -211,11 +211,12 @@
         scroll-behavior: smooth;
       }
 
-      .cart-item {
+      .item-cart {
         height: 50px;
         background-color: #4CAF50;
         color: white;
         border: 1px solid black;
+        border-radius: 8px;
         flex-shrink: 0;
       }
 
@@ -224,7 +225,7 @@
         overflow-x: auto;
         scroll-behavior: smooth;
         gap: 1rem;
-        margin-right: 20px;
+        margin-left: 20px;
       }
 
       .item-merchant {
@@ -233,7 +234,9 @@
         background-color: #4CAF50;
         color: white;
         border: 1px solid black;
+        border-radius: 8px;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         font-size: 1.5rem;
@@ -358,25 +361,33 @@
      <section id="page-merchant" class="page-merchant">
       <h1 id="header-merchant">TEST</h1>
       <div class="layout-merchant">
+        <section id="list-items" class="list-scroll-merchant"></section>
         <section id="cart-merchant" class="cart-merchant">
           <h5>YOUR CART</h5>
           <div id="scroll-list-cart" class="scroll-list-cart">
-            <div class="cart-item">BLT</div>
+            <!-- <div class="item-cart">BLT</div>
             <div class="cart-item">Tuna</div>
             <div class="cart-item">Pepsi</div>
             <div class="cart-item">Pepsi</div>
             <div class="cart-item">Pepsi</div>
+            <div class="cart-item">Pepsi</div>
+            <div class="cart-item">Pepsi</div>
+            <div class="cart-item">Pepsi</div>
+            <div class="cart-item">Pepsi</div>
+            <div class="cart-item">Pepsi</div> -->
           </div>
           <p>TOTAL: $19.99</p>
           <button>CHECKOUT</button>
         </section>
-        <section id="list-items" class="list-scroll-merchant"></section>
       </div>
      </section>
 
 
     <script>
       // ===== Data =====
+
+      // Array for holding the user's cart
+      const cart = [];
 
       // Define the merchant data
       const merchantData = [{
@@ -521,10 +532,16 @@
       // Get all the pages and start the site on the home page
       const pages = document.querySelectorAll("[id*='page']");
       const backButton = document.getElementById("back-button");
+      let currentMerchantPage = "";
       openHomePage(true);
+
+      // ===== Home Page =====
 
       // Open the home page
       function openHomePage(firstTime) {
+        // Not on a merchant page, so reset the stored value
+        currentMerchantPage = "";
+
         // Turn off all pages
         pages.forEach((page) => {
           page.style.display =  "none";
@@ -537,14 +554,28 @@
         // Turn off the back button
         backButton.style.display = "none";
 
+        // Get the parent element for the list, create a div for each cuisine, and add the divs as children of the parent
+        const cuisineList = document.getElementById("list-cuisine");
+        cuisineData.forEach((cuisine) => {
+          const cuisineDiv = document.createElement("div");
+          cuisineDiv.textContent = cuisine.name;
+          cuisineDiv.className = "item-cuisine";
+          cuisineList.appendChild(cuisineDiv);
+        });
+
         // If the user should see the pick of the day popup, show it to them
         if (firstTime) {
           openDailyPick();
         }
       }
 
+      // ===== Merchant Page =====
+
       // Open the merchant page and set it up for the passed merchant id
       function openMerchantPage(merchantId) {
+        // Store the current merchant page
+        currentMerchantPage = merchantId;
+
         // Turn off all pages
         pages.forEach((page) => {
           page.style.display =  "none";
@@ -569,12 +600,36 @@
           merchantItemList.removeChild(merchantItemList.firstChild);
         }
         
-        // Create new children using the merchant data
+        // Create new children for the item list using the merchant data
         merchant.items.forEach((item) => {
           const itemDiv = document.createElement("div");
           itemDiv.textContent = item.name;
           itemDiv.className = "item-merchant";
           merchantItemList.appendChild(itemDiv);
+
+          // Create the add cart button for the item
+          const addCartButton = document.createElement("button");
+          addCartButton.textContent = "Add to Cart";
+          addCartButton.onclick = function() {
+            addToCart(item);
+          }
+          itemDiv.appendChild(addCartButton);
+        });
+
+        // Get the element that holds the list of items in the user's cart
+        const cartItemList = document.getElementById("scroll-list-cart");
+
+        // Remove all children from the cart list element
+        while (cartItemList.firstChild) {
+          cartItemList.removeChild(cartItemList.firstChild);
+        }
+
+        // Create new children for the user's cart using their cart data
+        cart.forEach((item) => {
+          const itemDiv = document.createElement("div");
+          itemDiv.textContent = item.name;
+          itemDiv.className = "item-cart";
+          cartItemList.appendChild(itemDiv);
         });
 
         // Turn on the back button so users can go back to the home page
@@ -582,6 +637,15 @@
         backButton.onclick = function() {
           openHomePage(false);
         };
+      }
+
+      // Add the passed item to the user's cart
+      function addToCart(item) {
+        // Add the item to the user's cart
+        cart.push(item);
+
+        // Refresh the merchant page to update the cart UI
+        openMerchantPage(currentMerchantPage);
       }
 
       // ===== Top Bar =====
@@ -600,17 +664,6 @@
       function openProfile() {
         console.log("open profile");
       }
-
-      // ===== Cuisines =====
-
-      // Get the parent element for the list, create a div for each cuisine, and add the divs as children of the parent
-      const cuisineList = document.getElementById("list-cuisine");
-      cuisineData.forEach((cuisine) => {
-        const cuisineDiv = document.createElement("div");
-        cuisineDiv.textContent = cuisine.name;
-        cuisineDiv.className = "item-cuisine";
-        cuisineList.appendChild(cuisineDiv);
-      });
     </script>
   </body>
 </html>
