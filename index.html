@@ -106,6 +106,39 @@
         border-radius: 2px;
       }
 
+      .calorie-progress-bar {
+        display: flex;
+        width: 500px;
+        height: 30px;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .calorie-progress-bar-container {
+        width: 90%;
+        height: 100%;
+        background-color: #ddd;
+        border-radius: 15px;
+        overflow: hidden;
+      }
+
+      .calorie-progress-bar-fill {
+        width: 0%;
+        height: 100%;
+        background-color: #4CAF50;
+        border-radius: 15px 0 0 15px;
+        transition: width 0.3s ease-in-out;
+      }
+
+      .calorie-progress-bar-search-button {
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+      }
+
       .profile-button {
         background: none;
         border: 1px solid black;
@@ -357,16 +390,22 @@
         </div>
         <div class="number-input-column">
           <p>CALORIES</p>
-          <input type="number" id="calorieInput" value="500" step="10">
+          <input type="number" id="calorie-input" value="500" step="10" onchange="onCalorieInputChange()">
         </div>
       </div>
-      <div class="search-bar">
+      <div id="search-bar" class="search-bar">
         <input type="text" id="searchBar" placeholder="Search">
         <button class="hamburger-menu" aria-label="Open menu" onclick="openPreferences()">
           <span class="hamburger-menu-bar"></span>
           <span class="hamburger-menu-bar"></span>
           <span class="hamburger-menu-bar"></span>
-      </button>
+        </button>
+      </div>
+      <div id="calorie-progress-bar" class="calorie-progress-bar">
+        <div class="calorie-progress-bar-container">
+          <div id="calorie-progress-fill" class="calorie-progress-bar-fill"></div>
+        </div>
+        <button class="calorie-progress-bar-search-button">🔎</button>
       </div>
       <div>
         <button class="profile-button" onclick="openProfile()">Profile</button>
@@ -600,13 +639,62 @@
         let merchantObject = {displayName: "Test"};
 
         merchantData.forEach((merchant) => {
-          console.log(merchant);
           if (merchant.id === merchantId) {
             merchantObject = merchant;
           }
         });
 
         return merchantObject;
+      }
+
+      // ===== Top Bar =====
+
+      const calorieInput = document.getElementById("calorie-input");
+      const step = parseInt(calorieInput.step);
+
+      function incrementCalorieInput() {
+        calorieInput.value = parseInt(calorieInput.value) + step;
+        updateCalorieProgressBar();
+      }
+
+      function decrementCalorieInput() {
+        calorieInput.value = parseInt(calorieInput.value) - step;
+        updateCalorieProgressBar();
+      }
+
+      function onCalorieInputChange(value) {
+        updateCalorieProgressBar();
+      }
+
+      const searchBar = document.getElementById("search-bar");
+      const calorieProgressBar = document.getElementById("calorie-progress-bar");
+      const calorieProgressFill = document.getElementById("calorie-progress-fill");
+
+      function enableSearchBar() {
+        searchBar.style.display = "flex";
+        calorieProgressBar.style.display = "none";
+      }
+
+      function enableCalorieProgressBar() {
+        searchBar.style.display = "none";
+        calorieProgressBar.style.display = "flex";
+
+        updateCalorieProgressBar();
+      }
+
+      function updateCalorieProgressBar() {
+        let caloriesInCart = 0;
+        cart.forEach((item) => {
+          caloriesInCart += item.calories;
+        });
+
+        const percentage = (caloriesInCart / calorieInput.value) * 100;
+
+        calorieProgressFill.style.width = `${percentage}%`;
+      }
+
+      function openProfile() {
+        console.log("open profile");
       }
 
       // ===== Popups =====
@@ -690,6 +778,9 @@
         // Turn off the back button
         backButton.style.display = "none";
 
+        // Turn on the search bar
+        enableSearchBar();
+
         // Get the parent element for the list, create a div for each cuisine, and add the divs as children of the parent
         const cuisineList = document.getElementById("list-cuisine");
         cuisineData.forEach((cuisine) => {
@@ -717,6 +808,9 @@
           page.style.display =  "none";
         });
 
+        // Turn on the calorie progress bar
+        enableCalorieProgressBar();
+
         // Get the data for this merchant
         const merchant = getMerchant(merchantId);
 
@@ -738,10 +832,21 @@
         
         // Create new children for the item list using the merchant data
         merchant.items.forEach((item) => {
+          // Create the item and show its name
           const itemDiv = document.createElement("div");
           itemDiv.textContent = item.name;
           itemDiv.className = "item-merchant";
           merchantItemList.appendChild(itemDiv);
+
+          // Show the item's calorie count
+          const calorieText = document.createElement("p");
+          calorieText.textContent = `${item.calories} Calories`;
+          itemDiv.appendChild(calorieText);
+
+          // Show the item's cost
+          const priceText = document.createElement("p");
+          priceText.textContent = `\$${item.price}`;
+          itemDiv.appendChild(priceText);
 
           // Create the add cart button for the item
           const addCartButton = document.createElement("button");
@@ -788,6 +893,9 @@
         // Add the item to the user's cart
         cart.push(item);
 
+        // Update the calorie bar
+        updateCalorieProgressBar();
+
         // Refresh the merchant page to update the cart UI
         openMerchantPage(currentMerchantPage);
       }
@@ -804,6 +912,9 @@
         // Turn on the cart page
         const cartPage = document.getElementById("page-cart");
         cartPage.style.display = "block";
+
+        // Turn on the calorie progress bar
+        enableCalorieProgressBar();
 
         // Get the element that holds the list of items in the user's cart
         const cartItemList = document.getElementById("scroll-list-cart");
@@ -854,23 +965,6 @@
 
         // Clear the cart now that the user has ordered it
         cart.length = 0;
-      }
-
-      // ===== Top Bar =====
-
-      const calorieInput = document.getElementById("calorieInput");
-      const step = parseInt(calorieInput.step);
-
-      function incrementCalorieInput() {
-        calorieInput.value = parseInt(calorieInput.value) + step;
-      }
-
-      function decrementCalorieInput() {
-        calorieInput.value = parseInt(calorieInput.value) - step;
-      }
-
-      function openProfile() {
-        console.log("open profile");
       }
     </script>
   </body>
