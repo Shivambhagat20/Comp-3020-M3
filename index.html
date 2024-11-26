@@ -255,7 +255,6 @@
         flex-direction: column;
         align-items: center;
         gap: 10px;
-        
       }
 
       .scroll-list-merchant-cart {
@@ -376,10 +375,17 @@
         background-color: #bebebe;
         box-shadow: none;
       }
+
+      .preferences-calorie-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 20px;
+      }
     </style>
   </head>
   <body>
-    
+
      <!-- Top Bar -->
     <div class="top-bar">
       <button id="back-button" class="back-button">&lt;</button>
@@ -424,6 +430,12 @@
     <section id="popup-preferences" class="popup">
       <h1>PREFERENCES</h1>
       <div id="close-preferences" class="close-button" onclick="closePreferences()">×</div>
+      <div class="preferences-calorie-item">
+        <p>CALORIES</p>
+        <input type="number" id="calorie-item-input" value="">
+        <p>Leave blank for no limit</p>
+      </div>
+      <button class="profile-button" onclick="closePreferences()">DONE</button>
     </section>
 
     <section id="popup-order" class="popup">
@@ -663,7 +675,7 @@
         updateCalorieProgressBar();
       }
 
-      function onCalorieInputChange(value) {
+      function onCalorieInputChange() {
         updateCalorieProgressBar();
       }
 
@@ -720,6 +732,8 @@
         overlay.style.display = "none";
         popupDailyPick.style.display = "none";
       }
+
+      const calorieItemInput = document.getElementById("calorie-item-input");
 
       // Open the preferences popup and make the overlay close the popup when clicked
       function openPreferences() {
@@ -889,14 +903,27 @@
           priceText.textContent = `\$${item.price}`;
           itemDiv.appendChild(priceText);
 
+          // Determine if any items are over the user's item or total limits, and don't allow the user to order those items
+
+          const calorieLimitPerItem = calorieItemInput.value;
+
           let caloriesInCart = 0;
           cart.forEach((item) => {
             caloriesInCart += item.calories;
           });
-          if (item.calories + caloriesInCart > calorieInput.value) {
-            // Show the item would put the user over their limit
+
+          const overItemLimit = (calorieLimitPerItem !== "" && item.calories > calorieLimitPerItem)
+          const overTotalLimit = (item.calories + caloriesInCart > calorieInput.value);
+
+          if (overItemLimit) {
+            // Show the user that this item is over their per-item calorie limit
             const overLimitText = document.createElement("p");
-            overLimitText.textContent = "OVER LIMIT";
+            overLimitText.textContent = "OVER ITEM LIMIT";
+            itemDiv.appendChild(overLimitText);
+          } else if (overTotalLimit) {
+            // Show the item would put the user over their total calorie limit
+            const overLimitText = document.createElement("p");
+            overLimitText.textContent = "OVER TOTAL LIMIT";
             itemDiv.appendChild(overLimitText);
           } else {
             // Create the add cart button for the item
