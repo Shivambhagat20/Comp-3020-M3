@@ -379,14 +379,14 @@
     </style>
   </head>
   <body>
+    
      <!-- Top Bar -->
-
     <div class="top-bar">
       <button id="back-button" class="back-button">&lt;</button>
       <div class="number-input">
         <div class="number-input-column">
-          <button class="arrow-up" onclick="incrementCalorieInput()"></button>
-          <button class="arrow-down" onclick="decrementCalorieInput()"></button>
+          <button id="calorie-input-increment" class="arrow-up" onclick="incrementCalorieInput()"></button>
+          <button id="calorie-input-decrement" class="arrow-down" onclick="decrementCalorieInput()"></button>
         </div>
         <div class="number-input-column">
           <p>CALORIES</p>
@@ -414,7 +414,6 @@
     </div>
 
     <!-- Popups -->
-
     <div id="popup-overlay" class="popup-overlay"></div>
 
     <section id="popup-daily-pick" class="popup">
@@ -654,11 +653,13 @@
 
       function incrementCalorieInput() {
         calorieInput.value = parseInt(calorieInput.value) + step;
+
         updateCalorieProgressBar();
       }
 
       function decrementCalorieInput() {
         calorieInput.value = parseInt(calorieInput.value) - step;
+
         updateCalorieProgressBar();
       }
 
@@ -670,11 +671,13 @@
       const calorieProgressBar = document.getElementById("calorie-progress-bar");
       const calorieProgressFill = document.getElementById("calorie-progress-fill");
 
+      // Turn on the search bar and turn off the calorie bar
       function enableSearchBar() {
         searchBar.style.display = "flex";
         calorieProgressBar.style.display = "none";
       }
 
+      // Turn on the calorie bar, update its values, and turn off the search bar
       function enableCalorieProgressBar() {
         searchBar.style.display = "none";
         calorieProgressBar.style.display = "flex";
@@ -682,6 +685,7 @@
         updateCalorieProgressBar();
       }
 
+      // Update the calorie progress bar based on the items in the user's cart and the calorie limit
       function updateCalorieProgressBar() {
         let caloriesInCart = 0;
         cart.forEach((item) => {
@@ -798,6 +802,8 @@
 
       // ===== Merchant Page =====
 
+      let addedCalorieInputFunctions = false;
+
       // Open the merchant page and set it up for the passed merchant id
       function openMerchantPage(merchantId) {
         // Store the current merchant page
@@ -822,6 +828,41 @@
         const merchantHeader = document.getElementById("header-merchant");
         merchantHeader.textContent = merchant.displayName;
 
+        // Add listeners to the calorie limit controls so the item list can refresh if the limit changes
+        if (!addedCalorieInputFunctions) {
+          const calorieInputIncrement = document.getElementById("calorie-input-increment");
+          const calorieInputDecrement = document.getElementById("calorie-input-decrement");
+
+          // Add the listeners
+          calorieInputIncrement.addEventListener('click', () => {
+            if(currentMerchantPage !== "") {
+              setupMerchantItems(merchant);
+            }
+          });
+          calorieInputDecrement.addEventListener('click', () => {
+            if(currentMerchantPage !== "") {
+              setupMerchantItems(merchant);
+            }
+          });
+          calorieInput.addEventListener('change', () => {
+            if(currentMerchantPage !== "") {
+              setupMerchantItems(merchant);
+            }
+          });
+
+          // Ensure this only happens once
+          addedCalorieInputFunctions = true;
+        }
+        
+        // Setup the items the merchant offers
+        setupMerchantItems(merchant);
+
+        // Setup the items in the user's cart
+        setupCartItems();
+      }
+
+      // Create new children for the item list using the merchant data
+      function setupMerchantItems(merchant) {
         // Get the element that holds the list of items that this merchant sells
         const merchantItemList = document.getElementById("list-items");
         
@@ -829,8 +870,8 @@
         while (merchantItemList.firstChild) {
           merchantItemList.removeChild(merchantItemList.firstChild);
         }
-        
-        // Create new children for the item list using the merchant data
+
+        // Create the items
         merchant.items.forEach((item) => {
           // Create the item and show its name
           const itemDiv = document.createElement("div");
@@ -848,15 +889,29 @@
           priceText.textContent = `\$${item.price}`;
           itemDiv.appendChild(priceText);
 
-          // Create the add cart button for the item
-          const addCartButton = document.createElement("button");
-          addCartButton.textContent = "Add to Cart";
-          addCartButton.onclick = function() {
-            addToCart(item);
+          let caloriesInCart = 0;
+          cart.forEach((item) => {
+            caloriesInCart += item.calories;
+          });
+          if (item.calories + caloriesInCart > calorieInput.value) {
+            // Show the item would put the user over their limit
+            const overLimitText = document.createElement("p");
+            overLimitText.textContent = "OVER LIMIT";
+            itemDiv.appendChild(overLimitText);
+          } else {
+            // Create the add cart button for the item
+            const addCartButton = document.createElement("button");
+            addCartButton.textContent = "Add to Cart";
+            addCartButton.onclick = function() {
+              addToCart(item);
+            }
+            itemDiv.appendChild(addCartButton);
           }
-          itemDiv.appendChild(addCartButton);
         });
+      }
 
+      // Create new children for the user's cart using their cart data
+      function setupCartItems() {
         // Get the element that holds the list of items in the user's cart
         const cartItemList = document.getElementById("scroll-list-merchant-cart");
 
@@ -865,7 +920,7 @@
           cartItemList.removeChild(cartItemList.firstChild);
         }
 
-        // Create new children for the user's cart using their cart data
+        // Create the items in the cart
         cart.forEach((item) => {
           const itemDiv = document.createElement("div");
           itemDiv.textContent = item.name;
@@ -951,6 +1006,7 @@
         };
       }
 
+      // Empty the cart and return to the homepage with a popup confirming the order
       function payNow() {
         // Only let the user pay if they have items in their cart
         if (cart.length === 0) {
