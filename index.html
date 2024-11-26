@@ -312,7 +312,9 @@
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 501;
-        justify-content: center;
+        justify-content: space-between;
+        flex-direction: column;
+        text-align: center;
       }
 
       .close-button {
@@ -386,6 +388,12 @@
       <div id="close-preferences" class="close-button" onclick="closePreferences()">×</div>
     </section>
 
+    <section id="popup-order" class="popup">
+      <h1>ORDER CONFIRMED</h1>
+      <div id="close-order" class="close-button" onclick="closeOrder()">×</div>
+      <p id="text-cost-order"></p>
+    </section>
+
     <!-- Home page -->
     <section id="page-home" class="page-home">
       <!-- Recommended -->
@@ -410,7 +418,7 @@
         <section id="cart-merchant" class="cart-merchant">
           <h5>YOUR CART</h5>
           <div id="scroll-list-merchant-cart" class="scroll-list-merchant-cart"></div>
-          <p>TOTAL: $19.99</p>
+          <p id="text-cost-merchant"></p>
           <button onclick="openCartPage()">CHECKOUT</button>
         </section>
       </div>
@@ -426,8 +434,8 @@
         <section class="section-cart">
           <h1>YOUR CART</h1>
           <div id="scroll-list-cart" class="scroll-list-cart"></div>
-          <p>TOTAL: $19.99</p>
-          <button class="profile-button">PAY NOW</button>
+          <p id="text-cost-cart">sd</p>
+          <button class="profile-button" onclick="payNow()">PAY NOW</button>
         </section>
       </div>
     </section>
@@ -437,7 +445,7 @@
       // ===== Data =====
 
       // Array for holding the user's cart
-      const cart = [];
+      let cart = [];
 
       // Define the merchant data
       const merchantData = [{
@@ -445,72 +453,128 @@
         displayName: "SUBWAY",
         items: [{
           name: "Pizza Sub Melt",
+          calories: 220,
+          price: 8.49
         }, {
           name: "BLT",
+          calories: 220,
+          price: 8.49
         }, {
           name: "Tuna",
+          calories: 400,
+          price: 8.49
         }, {
           name: "Pepsi",
+          calories: 300,
+          price: 4.49
         }, {
           name: "Cookies",
+          calories: 350,
+          price: 4.99
         }, {
           name: "Item X",
+          calories: 500,
+          price: 9.99
         }, {
           name: "Item Y",
+          calories: 500,
+          price: 9.99
         }]
       }, {
         id: "nuburger",
         displayName: "NUBURGER",
         items: [{
           name: "Item A",
+          calories: 400,
+          price: 8.99
         }, {
           name: "Item B",
+          calories: 500,
+          price: 8.99
         }, {
           name: "Item C",
+          calories: 300,
+          price: 7.99
         }, {
           name: "Item D",
+          calories: 600,
+          price: 9.99
         }, {
           name: "Item E",
+          calories: 400,
+          price: 5.99
         }, {
           name: "Item F",
+          calories: 200,
+          price: 4.99
         }, {
           name: "Item G",
+          calories: 250,
+          price: 4.99
         }]
       }, {
         id: "booster-juice",
         displayName: "BOOSTER JUICE",
         items: [{
           name: "Item A",
+          calories: 200,
+          price: 5.99
         }, {
           name: "Item B",
+          calories: 200,
+          price: 5.99
         }, {
           name: "Item C",
+          calories: 300,
+          price: 8.99
         }, {
           name: "Item D",
+          calories: 500,
+          price: 15.99
         }, {
           name: "Item E",
+          calories: 500,
+          price: 15.99
         }, {
           name: "Item F",
+          calories: 400,
+          price: 9.99
         }, {
           name: "Item G",
+          calories: 500,
+          price: 9.99
         }]
       }, {
         id: "freshii",
         displayName: "FRESHII",
         items: [{
           name: "Item A",
+          calories: 300,
+          price: 5.99
         }, {
           name: "Item B",
+          calories: 200,
+          price: 4.99
         }, {
           name: "Item C",
+          calories: 500,
+          price: 5.99
         }, {
           name: "Item D",
+          calories: 400,
+          price: 6.99
         }, {
           name: "Item E",
+          calories: 500,
+          price: 7.99
         }, {
           name: "Item F",
+          calories: 700,
+          price: 12.99
         }, {
           name: "Item G",
+          calories: 500,
+          price: 7.99
         }]
       }];
 
@@ -550,6 +614,7 @@
       const overlay = document.getElementById("popup-overlay");
       const popupDailyPick = document.getElementById("popup-daily-pick");
       const popupPreferences = document.getElementById("popup-preferences");
+      const popupOrder = document.getElementById("popup-order");
 
       // Open the pick of the day popup and make the overlay close the popup when clicked
       function openDailyPick() {
@@ -575,6 +640,27 @@
       function closePreferences() {
         overlay.style.display = "none";
         popupPreferences.style.display = "none";
+      }
+
+      // Open the order confirmation popup and make the overlay close the popup when clicked
+      function openOrder() {
+        overlay.style.display = "block";
+        popupOrder.style.display = "flex";
+
+        overlay.onclick = closeOrder;
+
+        // Calculate the price of the cart and display that to the user
+        const costText = document.getElementById("text-cost-order");
+        let totalCost = 0;
+        cart.forEach((item) => {
+          totalCost += item.price;
+        });
+        costText.textContent = `TOTAL: \$${totalCost.toFixed(2)}`;
+      }
+
+      function closeOrder() {
+        overlay.style.display = "none";
+        popupOrder.style.display = "none";
       }
 
       // ===== Page Management =====
@@ -682,6 +768,14 @@
           cartItemList.appendChild(itemDiv);
         });
 
+        // Calculate the price of the cart and display that to the user
+        const costText = document.getElementById("text-cost-merchant");
+        let totalCost = 0;
+        cart.forEach((item) => {
+          totalCost += item.price;
+        });
+        costText.textContent = `TOTAL: \$${totalCost.toFixed(2)}`;
+
         // Turn on the back button so users can go back to the home page
         backButton.style.display = "block";
         backButton.onclick = function() {
@@ -700,6 +794,7 @@
 
       // ===== Cart Page =====
 
+      // Open the cart page and set it up based on the items in the user's cart
       function openCartPage() {
         // Turn off all pages
         pages.forEach((page) => {
@@ -726,6 +821,14 @@
           cartItemList.appendChild(itemDiv);
         });
 
+        // Calculate the price of the cart and display that to the user
+        const costText = document.getElementById("text-cost-cart");
+        let totalCost = 0;
+        cart.forEach((item) => {
+          totalCost += item.price;
+        });
+        costText.textContent = `TOTAL: \$${totalCost.toFixed(2)}`;
+
         // Turn on the back button so users can go back to the home page or to the merchant page they came from
         backButton.style.display = "block";
         backButton.onclick = function() {
@@ -735,6 +838,22 @@
             openMerchantPage(currentMerchantPage);
           }
         };
+      }
+
+      function payNow() {
+        // Only let the user pay if they have items in their cart
+        if (cart.length === 0) {
+          return;
+        }
+
+        // Return to the homepage now that the cart has been ordered
+        openHomePage(false);
+
+        // Open a popup so the user can confirm their cart was ordered
+        openOrder();
+
+        // Clear the cart now that the user has ordered it
+        cart.length = 0;
       }
 
       // ===== Top Bar =====
