@@ -925,15 +925,15 @@
             const overLimitText = document.createElement("p");
             overLimitText.textContent = "OVER TOTAL LIMIT";
             itemDiv.appendChild(overLimitText);
-          } else {
-            // Create the add cart button for the item
-            const addCartButton = document.createElement("button");
-            addCartButton.textContent = "Add to Cart";
-            addCartButton.onclick = function() {
-              addToCart(item);
-            }
-            itemDiv.appendChild(addCartButton);
           }
+
+          // Create the add cart button for the item
+          const addCartButton = document.createElement("button");
+          addCartButton.textContent = "Add to Cart";
+          addCartButton.onclick = function() {
+            addToCart(item);
+          }
+          itemDiv.appendChild(addCartButton);
         });
       }
 
