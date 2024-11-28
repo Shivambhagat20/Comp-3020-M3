@@ -173,28 +173,42 @@ const merchantData = [
 
 // Define the cuisine data
 const cuisineData = [
-    {
-        name: "Pizza",
-    },
-    {
-        name: "Mexican",
-    },
-    {
-        name: "Chinese",
-    },
-    {
-        name: "Indian",
-    },
-    {
-        name: "Cuisine X",
-    },
-    {
-        name: "Cuisine Y",
-    },
-    {
-        name: "Cuisine Z",
-    },
+  { name: "pizza", logo: "pizza.jpg" },
+  { name: "Mexican", logo: "mexican.jpg" },
+  { name: "Indian", logo: "indian.jpg" },
+  { name: "Chinese", logo: "chinese.jpg" },
+  { name: "greek", logo: "greek.jpeg" },
+  { name: "french", logo: "french.jpg" },
+  { name: "American", logo: "american.webp" },
+  // Add more cuisines as needed
 ];
+
+// Reference the container where the cuisines will be added
+const cuisineContainer = document.getElementById('list-cuisine');
+
+// Generate HTML for each cuisine and append it to the container
+cuisineData.forEach(cuisine => {
+  const cuisineItem = document.createElement('div');
+  cuisineItem.classList.add('cuisine-item');
+
+  // Create the logo image
+  const cuisineLogo = document.createElement('img');
+  cuisineLogo.src = cuisine.logo;
+  cuisineLogo.alt = `${cuisine.name} Cuisine`;
+  cuisineLogo.classList.add('cuisine-logo');
+
+  // Create the name paragraph
+  const cuisineName = document.createElement('p');
+  cuisineName.textContent = cuisine.name;
+  cuisineName.classList.add('cuisine-name');
+
+  // Append logo and name to the cuisine item
+  cuisineItem.appendChild(cuisineLogo);
+  cuisineItem.appendChild(cuisineName);
+
+  // Append the cuisine item to the container
+  cuisineContainer.appendChild(cuisineItem);
+});
 
 // Given a merchant id, return the merchant data object
 function getMerchant(merchantId) {
@@ -350,14 +364,7 @@ function openHomePage(firstTime) {
     // Turn on the search bar
     enableSearchBar();
 
-    // Get the parent element for the list, create a div for each cuisine, and add the divs as children of the parent
-    const cuisineList = document.getElementById("list-cuisine");
-    cuisineData.forEach((cuisine) => {
-        const cuisineDiv = document.createElement("div");
-        cuisineDiv.textContent = cuisine.name;
-        cuisineDiv.className = "item-cuisine";
-        cuisineList.appendChild(cuisineDiv);
-    });
+   
 
     // If the user should see the pick of the day popup, show it to them
     if (firstTime) {
