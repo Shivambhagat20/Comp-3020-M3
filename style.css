@@ -305,7 +305,7 @@ input[type="number"] {
     margin-left: 20px;
 }
 
-.item-merchant {
+/*.item-merchant {
     width: 300px;
     height: 500px;
     background-color: #4caf50;
@@ -318,6 +318,60 @@ input[type="number"] {
     align-items: center;
     font-size: 1.5rem;
     flex-shrink: 0;
+}*/
+
+.item-merchant {
+    display: flex;
+    width: 300px;
+    height: 500px;
+    flex-direction: column;
+    margin: 1px;
+    padding: 1px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    background-color:rgba(255, 255, 255, 0.3);
+}
+.item-image {
+    width: 300px;
+    height: 350px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.item-name,
+.item-calories,
+.item-price {
+    margin: 5px 0;
+    text-align: center;
+}
+
+.over-limit-warning {
+    color: red;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.add-cart-button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+
+.add-cart-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
 
@@ -469,7 +523,6 @@ input[type="number"] {
     justify-content: center;
     gap: 20px;
 }
-
 
 
 
